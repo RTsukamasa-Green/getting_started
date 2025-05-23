@@ -1,0 +1,370 @@
+DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starting a Graph Project with Neo4j - Interactive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Visualization & Content Choices:
+        - Report Info: Overall Guide Structure -> Goal: Easy Navigation & Content Segmentation -> Viz/Presentation: Top Navigation Tabs (HTML/Tailwind/JS) & Main Content Area -> Interaction: Click tabs to switch displayed content view -> Justification: Standard, intuitive SPA navigation for clear content separation.
+        - Report Info: Project Phases (1. Define Use Case, 2. Plan & Prototype, etc.) -> Goal: Clear presentation of sequential steps & details -> Viz/Presentation: Accordion for each phase with clear headings (HTML/Tailwind/JS) -> Interaction: Click phase title to expand/collapse details -> Justification: Organizes detailed information effectively, allows users to focus on specific phases, reduces initial visual clutter.
+        - Report Info: Key Resources & Support -> Goal: Provide accessible links and information -> Viz/Presentation: Styled list of links and text blocks (HTML/Tailwind) -> Interaction: Clickable links -> Justification: Standard and effective for resource lists.
+        - Report Info: Appendix FAQ -> Goal: Answer common questions effectively -> Viz/Presentation: Interactive Accordion (HTML/Tailwind/JS) -> Interaction: Click question to reveal answer -> Justification: Saves space, improves readability by hiding answers until needed.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. No Chart.js/Plotly.js needed as content is primarily textual.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Assuming Inter is a preferred font, fallback to sans-serif */
+        }
+        /* Custom scrollbar for a cleaner look (optional) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; /* slate-300 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; /* slate-400 */
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .accordion-button.active + .accordion-content {
+            /* max-height will be set by JS */
+        }
+        .nav-button {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .nav-button.active {
+            background-color: #3b82f6; /* bg-blue-600 */
+            color: white;
+        }
+        .nav-button:hover:not(.active) {
+            background-color: #e5e7eb; /* bg-gray-200 */
+        }
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-slate-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row items-center justify-between py-4">
+                <h1 class="text-2xl sm:text-3xl font-bold mb-2 sm:mb-0">Neo4j Project Guide</h1>
+                <nav class="flex flex-wrap justify-center space-x-2 sm:space-x-4">
+                    <button data-target="phases" class="nav-button active text-sm sm:text-base font-medium py-2 px-3 sm:px-4 rounded-md">Project Phases</button>
+                    <button data-target="resources" class="nav-button text-sm sm:text-base font-medium py-2 px-3 sm:px-4 rounded-md">Key Resources</button>
+                    <button data-target="faq" class="nav-button text-sm sm:text-base font-medium py-2 px-3 sm:px-4 rounded-md">Data Modelling 101</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <section id="phases" class="content-section active">
+            <div class="bg-white p-6 rounded-xl shadow-xl mb-8">
+                <h2 class="text-3xl font-semibold text-slate-700 mb-2">Navigating Your Neo4j Project</h2>
+                <p class="text-slate-600 mb-6 leading-relaxed">
+                    This guide outlines a structured, phased approach to successfully initiate and develop your graph project with Neo4j. From defining your initial use case to deploying a production-ready solution, each phase builds upon the last, ensuring a clear path to leveraging the power of graph technology. Explore each phase below to understand the key activities and considerations.
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <button class="accordion-button w-full text-left p-5 sm:p-6 bg-slate-100 hover:bg-slate-200 focus:outline-none transition duration-300">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl sm:text-2xl font-semibold text-blue-600">1. Define Your Use Case - Questions and Data</h3>
+                            <span class="accordion-icon text-blue-600 text-2xl transform transition-transform duration-300">&#x276F;</span>
+                        </div>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-5 sm:p-6 border-t border-slate-200">
+                            <p class="text-slate-700 mb-3 leading-relaxed">Clearly articulate the questions you want to answer and the specific business problems or pain points you aim to solve.</p>
+                            <p class="text-slate-700 leading-relaxed"><strong>How can a graph database help?</strong> If you're seeking to quickly consider if your use case is right for graph, please refer to the <strong>Data Modelling 101 </strong> section for guidance. You can also leverage Neo4j Expertise by reaching out to your <strong>Technical Account Manager (TAM)</strong> for a review of your requirements and to discuss how a <strong><a href="https://drive.google.com/file/d/1QciUqrpYP9jBEKMu_lMEUWYDESs6_NOK/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-slate-700 hover:text-blue-500 transition duration-300 underline"> Neo4j Bootcamp</a></strong> can support your team with rapid prototyping. But the most important thing is to start.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <button class="accordion-button w-full text-left p-5 sm:p-6 bg-slate-100 hover:bg-slate-200 focus:outline-none transition duration-300">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl sm:text-2xl font-semibold text-blue-600">2. Plan and Prototype Your Graph Solution</h3>
+                            <span class="accordion-icon text-blue-600 text-2xl transform transition-transform duration-300">&#x276F;</span>
+                        </div>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-5 sm:p-6 border-t border-slate-200">
+                            <p class="text-slate-700 mb-4 leading-relaxed">Once your use case is defined, it is recommended to start with an initial graph prototype. Building graphs is an iterative process. By starting small this will help with making data modelling decisions that can be changed as you learn about the data available to work with. Remeber a key difference between Relational versus Graph is the iterative nature of the data modelling approach; You don't have to polish the fittings before digging the foundations.</p>
+                            <ul class="list-disc list-inside space-y-3 text-slate-700 mb-4">
+                                <li><strong>Prototype Goal:</strong> Focus on a small, representative subset of your data to quickly demonstrate the core value of a graph approach.</li>
+                                <li><strong>Set Up Your Environment:</strong>
+                                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                                        <li>Install Neo4j or create an AuraDB instance.</li>
+                                        <li>Select a driver/client library for your preferred language (Python, Java, JavaScript). Cypher logic is easy to move between and platforms, so use whatever is comfortable for getting started.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Define Goals for the Prototype:</strong> What is your organisation looking for?
+                                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                                <li>What initial data set can be ingested to explore this?</li>
+                                <li>Play with whiteboard models or <a
+                                href="arrows.app"
+                                class="text-slate-700 hover:text-blue-500 transition duration-300 underline"
+                                target="_blank" rel="noopener noreferrer">the Arrows App</a> to see how the data can be structured.</li>
+                                </ul>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <button class="accordion-button w-full text-left p-5 sm:p-6 bg-slate-100 hover:bg-slate-200 focus:outline-none transition duration-300">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl sm:text-2xl font-semibold text-blue-600">3. Proof of Value (POV)</h3>
+                            <span class="accordion-icon text-blue-600 text-2xl transform transition-transform duration-300">&#x276F;</span>
+                        </div>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-5 sm:p-6 border-t border-slate-200">
+                            <p class="text-slate-700 mb-4 leading-relaxed">The POV phase involves integrating sample real-world data and then refining your prototype based on what you have learned.</p>
+                            <ul class="list-disc list-inside space-y-3 text-slate-700 mb-4">
+                                <li><strong>Integrate Sample Real-World Data:</strong>
+                                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                                        li>Using an initial model from, for example, a whiteboard session, ingest data with your chosen tool.</li>
+                                    <li>This is just the initial step, it will not have to be perfect. Graphs are inherently adaptive and iterative and will grow with you once you've seeded them.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Iterate the Data Model:</strong> Refine your graph model based on prototype insights and data understanding.</li>
+                                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                                        <li>Is the graph structure sensical to you? To others?</li>
+                                        <li>Can you query it easily?</li>
+                                        <li>Graph works best by leveraging the area expertise you and your
+                                        colleagues already have. If something else seems better, try it.</li>
+                                        <li>Identify new data sources and how they connect. Where are nodes (people, locations, events) connected between the two?</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Integrate with UI/BI Tools:</strong>
+                                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                                        <li><strong>Neo4j Bloom</strong> or <strong>NeoDash</strong> for interactive graph exploration.</li>
+                                        <li>Encourage data science staff to query in their favoured environment (e.g notebooks) to see how the graph fits into their workflows.</li>
+                                        <li>BI tools (e.g., Looker) to enrich dashboards with graph insights.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <button class="accordion-button w-full text-left p-5 sm:p-6 bg-slate-100 hover:bg-slate-200 focus:outline-none transition duration-300">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl sm:text-2xl font-semibold text-blue-600">4. First Production / Minimum Viable Product (MVP)</h3>
+                            <span class="accordion-icon text-blue-600 text-2xl transform transition-transform duration-300">&#x276F;</span>
+                        </div>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-5 sm:p-6 border-t border-slate-200">
+                            <p class="text-slate-700 mb-4 leading-relaxed">This phase focuses on building a functional, production-like version of your solution for initial user testing.</p>
+                            <ul class="list-disc list-inside space-y-3 text-slate-700 mb-4">
+                                <li><strong>Integrate a Data Pipeline:</strong> Establish robust ETL processes for continuous data integration.</li>
+                                <li><strong>Develop Your Application:</strong>
+                                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                                        <li>Use your chosen driver to connect to Neo4j.</li>
+                                        <li>Write production-grade Cypher queries.</li>
+                                        <li>Build application logic leveraging the graph.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Release for User Testing:</strong> Expand access to deploy the MVP to a subset of users for feedback and validation.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <button class="accordion-button w-full text-left p-5 sm:p-6 bg-slate-100 hover:bg-slate-200 focus:outline-none transition duration-300">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl sm:text-2xl font-semibold text-blue-600">5. Optimization and Tuning</h3>
+                            <span class="accordion-icon text-blue-600 text-2xl transform transition-transform duration-300">&#x276F;</span>
+                        </div>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-5 sm:p-6 border-t border-slate-200">
+                            <p class="text-slate-700 mb-4 leading-relaxed">The final phase involves refining the project for general release and ensuring it meets performance SLAs.</p>
+                            <ul class="list-disc list-inside space-y-3 text-slate-700 mb-4">
+                                <li><strong>Performance Optimization:</strong>
+                                    <ul class="list-circle list-inside ml-6 space-y-1 mt-1">
+                                        <li>Create indexes for frequently queried properties.</li>
+                                        <li>Monitor and optimize Cypher statements.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Scalability:</strong> Consider adapting the vertical (size of machines) and horizontal (number of machines) in the cluster.</li>
+                                <li><strong>Productionization:</strong> Develop procedures for monitoring logs and backups</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="resources" class="content-section">
+            <div class="bg-white p-6 rounded-xl shadow-xl mb-8">
+                <h2 class="text-3xl font-semibold text-slate-700 mb-2">Unlock Your Graph Potential: Resources & Support</h2>
+                <p class="text-slate-600 mb-6 leading-relaxed">
+                    Neo4j provides a wealth of resources and dedicated support channels to help you succeed at every stage of your graph journey. Whether you're just starting or looking to optimize an existing deployment, these resources are designed to empower your team and accelerate your project.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Official Neo4j Resources</h3>
+                    <ul class="space-y-3">
+                        <li><a href="https://neo4j.com/" target="_blank" rel="noopener noreferrer" class="text-slate-700 hover:text-blue-500 transition duration-300 underline">Neo4j Website: Discover products, solutions, and company news.</a></li>
+                        <li><a href="https://neo4j.com/docs/" target="_blank" rel="noopener noreferrer" class="text-slate-700 hover:text-blue-500 transition duration-300 underline">Neo4j Documentation: Comprehensive guides and references.</a></li>
+                        <li><a href="https://neo4j.com/graphacademy/" target="_blank" rel="noopener noreferrer" class="text-slate-700 hover:text-blue-500 transition duration-300 underline">Neo4j Graph Academy: Free online courses for all skill levels.</a></li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Dedicated Support Channels</h3>
+                    <ul class="space-y-3 text-slate-700">
+                        <li><strong>Technical Account Manager (TAM):</strong> Reach out to your assigned TAM for business use case requirements review, architectural guidance, and Neo4j technical support and discussions about getting started with a bootcamp for quick prototyping.</li>
+                        <li><strong>Graph Use Case Training:</strong> Engage Neo4j for dedicated sessions where we can walk your team through similar real-life examples, demonstrating how graph data models have solved problems for other organizations.</li>
+                        <li><strong>Professional Training:</strong> Neo4j offers consultant-led training classes that can be used to onboard new teams and accelerate their graph journey with expert instruction. Contact your TAM for the latest enablement classes avaialble.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="content-section">
+             <div class="bg-white p-6 rounded-xl shadow-xl mb-8">
+                <h2 class="text-3xl font-semibold text-slate-700 mb-2">Graph Data Modelling Considerations</h2>
+                <p class="text-slate-600 mb-6 leading-relaxed">
+                    This section addresses common questions to help you with your initial graph data modelling. Explore these questions to gain clarity on leveraging graph technology effectively.
+                </p>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <button class="accordion-button w-full text-left p-5 sm:p-6 bg-slate-100 hover:bg-slate-200 focus:outline-none transition duration-300">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-lg sm:text-xl font-medium text-slate-700">Is my data inherently connected?</h4>
+                            <span class="accordion-icon text-slate-700 text-2xl transform transition-transform duration-300">&#x276F;</span>
+                        </div>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-5 sm:p-6 border-t border-slate-200">
+                            <p class="text-slate-600 leading-relaxed">Think about relationships between people, products, transactions, or locations. If the connections are as important as the individual data points, a graph database excels at representing these. Graph databases are designed to store and navigate relationships so you want to make sure these are represented in your model.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <button class="accordion-button w-full text-left p-5 sm:p-6 bg-slate-100 hover:bg-slate-200 focus:outline-none transition duration-300">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-lg sm:text-xl font-medium text-slate-700">Am I dealing with complex relationships?</h4>
+                            <span class="accordion-icon text-slate-700 text-2xl transform transition-transform duration-300">&#x276F;</span>
+                        </div>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-5 sm:p-6 border-t border-slate-200">
+                            <p class="text-slate-600 leading-relaxed">Do you have many-to-many relationships, or do the relationships themselves have properties (e.g., "purchased on a specific date," "worked on a project with a certain role")? Graph databases model these naturally, unlike relational databases which might require complex join tables.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <button class="accordion-button w-full text-left p-5 sm:p-6 bg-slate-100 hover:bg-slate-200 focus:outline-none transition duration-300">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-lg sm:text-xl font-medium text-slate-700">Am I asking "relationship-based" questions?</h4>
+                            <span class="accordion-icon text-slate-700 text-2xl transform transition-transform duration-300">&#x276F;</span>
+                        </div>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-5 sm:p-6 border-t border-slate-200">
+                            <p class="text-slate-600 mb-2 leading-relaxed">For example:</p>
+                            <ul class="list-disc list-inside space-y-1 text-slate-600">
+                                <li>"What's the shortest path between two entities?"</li>
+                                <li>"Who is connected to whom, and how (e.g., friends of friends)?"</li>
+                                <li>"What are common patterns or communities within your data?"</li>
+                                <li>"How does a change in one area impact connected areas (impact analysis)?"</li>
+                                <li>"Can we detect individuals of interest by analyzing unusual connections or rings?"</li>
+                            </ul>
+                            <p class="text-slate-600 mt-2 leading-relaxed">These types of queries are often highly performant and intuitive in graph databases.</p>
+                        </div>
+                    </div>
+                </div>
+        
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-700 text-slate-300 text-center p-6 mt-12">
+        <p>&copy; <span id="currentYear"></span> Neo4j Project Guide. For informational purposes.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navButtons = document.querySelectorAll('.nav-button');
+            const contentSections = document.querySelectorAll('.content-section');
+            const accordionButtons = document.querySelectorAll('.accordion-button');
+
+            // Navigation
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Deactivate all buttons and hide all sections
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    contentSections.forEach(section => section.classList.remove('active'));
+
+                    // Activate clicked button and show target section
+                    button.classList.add('active');
+                    const targetId = button.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('active');
+                    
+                    // Scroll to the top of the content area for better UX on section change
+                    // document.querySelector('main').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+
+            // Accordion
+            accordionButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling;
+                    const icon = button.querySelector('.accordion-icon');
+                    
+                    button.classList.toggle('active');
+
+                    if (button.classList.contains('active')) {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        if (icon) icon.style.transform = 'rotate(90deg)';
+                    } else {
+                        content.style.maxHeight = '0';
+                        if (icon) icon.style.transform = 'rotate(0deg)';
+                    }
+
+                    // Optional: Close other accordions in the same group (if needed)
+                    // To implement this, you'd need to group accordions, e.g., by parent container
+                    // and then iterate over siblings or other accordions in that group.
+                });
+            });
+
+            // Set current year in footer
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+        });
+    </script>
+
+</body>
+</html>
